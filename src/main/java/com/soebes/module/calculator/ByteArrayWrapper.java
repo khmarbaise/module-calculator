@@ -24,8 +24,12 @@ final class ByteArrayWrapper {
 
   @Override
   public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < this.byteArray().length; i++) {
+      sb.append(String.format("%02x", this.byteArray()[i]));
+    }
     return "ByteArrayWrapper{" +
-           "byteArray=" + Arrays.toString(byteArray) +
+           "byteArray=" + sb +
            '}';
   }
 
