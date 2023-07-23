@@ -94,15 +94,6 @@ class ModuleCalculatorTest {
 
   @Test
   void calculateHashForDirectoryTree() throws IOException {
-    Path moduleHash = Paths.get("target/maven-status/module.hash");
-    // Check module directory if "target/maven-status/module.hash" exists?
-    // if yes => Read the hash Sum
-    // if no => Calculate the hash over the directory tree of the module and write the hash file.
-    // Compare read with calculated hash sum. If hash hasn't existed the differences results to 'yes'!
-    // Difference yes: => Build Module
-    //             no: => do not build module
-    //
-
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(Paths.get("."));
 
