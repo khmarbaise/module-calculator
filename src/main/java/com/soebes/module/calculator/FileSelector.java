@@ -19,6 +19,9 @@ final class FileSelector {
     // intentionally empty.
   }
 
+  /**
+   * TODO: Need to find a good way to define the exclusions via parameter?
+   */
   static List<Path> selectAllFiles(Path start) throws IOException {
     try (Stream<Path> pathStream = Files.walk(start)) {
       return pathStream

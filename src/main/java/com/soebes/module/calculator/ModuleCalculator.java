@@ -15,6 +15,7 @@ public final class ModuleCalculator {
   private final Logger LOGGER = LoggerFactory.getLogger( getClass() );
 
   public ModuleCalculator() {
+    // intentionally empty.
   }
 
   public boolean hashChanged(Path path, Path hashFile) {

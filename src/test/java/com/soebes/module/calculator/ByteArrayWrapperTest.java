@@ -4,6 +4,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class ByteArrayWrapperTest {
 
   @Test
@@ -19,11 +21,7 @@ class ByteArrayWrapperTest {
   });
 
   @Test
-  void name() {
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < NULL.byteArray().length; i++) {
-      sb.append(String.format("%02x", NULL.byteArray()[i]));
-    }
-    System.out.println("sb = " + sb);
+  void checkExpectedToStringValue() {
+    assertThat(NULL).hasToString("ByteArrayWrapper{byteArray=0102030405060708111213141516171821222324252627283132333435363738}");
   }
 }
