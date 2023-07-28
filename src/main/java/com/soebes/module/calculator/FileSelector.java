@@ -19,17 +19,11 @@ final class FileSelector {
     // intentionally empty.
   }
 
-  /**
-   * TODO: Need to find a good way to define the exclusions via parameter?
-   */
-  static List<Path> selectAllFiles(Path start) throws IOException {
+  static List<Path> selectAllFiles(Path start, List<String> excludes) throws IOException {
     try (Stream<Path> pathStream = Files.walk(start)) {
       return pathStream
           .filter(IS_VALID_FILE)
-          .filter(s -> !start.relativize(s).startsWith("target"))
-          .filter(s -> !start.relativize(s).startsWith(".git"))
-          .filter(s -> !start.relativize(s).startsWith(".github"))
-          .filter(s -> !start.relativize(s).startsWith(".idea"))
+          .filter(file -> excludes.stream().noneMatch(exclude -> start.relativize(file).startsWith(exclude)))
           .collect(Collectors.toList());
     }
   }

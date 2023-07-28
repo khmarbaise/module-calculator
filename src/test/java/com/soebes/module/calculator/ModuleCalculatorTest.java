@@ -9,10 +9,14 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ModuleCalculatorTest {
+
+  private static final List<String> DEFAULT_EXCLUDES = Arrays.asList("target", ".git", ".github", ".idea");
 
   private static byte[] convert() {
     int[] given = new int[]{
@@ -48,7 +52,7 @@ class ModuleCalculatorTest {
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/target/maven-status/module.hash"), "hashfile".getBytes(StandardCharsets.UTF_8)); // Will be ignored!
       ModuleCalculator moduleCalculator = new ModuleCalculator();
-      ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(root.resolve("/root-project"));
+      ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(root.resolve("/root-project"), DEFAULT_EXCLUDES);
 
       assertThat(x).isEqualTo(DEFAULT);
     }
@@ -67,7 +71,7 @@ class ModuleCalculatorTest {
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/target/maven-status/module.hash"), convert());
       ModuleCalculator moduleCalculator = new ModuleCalculator();
-      boolean hashChanged = moduleCalculator.hashChanged(root.resolve("/root-project"), root.resolve("/root-project/target/maven-status/module.hash"));
+      boolean hashChanged = moduleCalculator.hashChanged(root.resolve("/root-project"), root.resolve("/root-project/target/maven-status/module.hash"), DEFAULT_EXCLUDES);
 
       assertThat(hashChanged).isFalse();
     }
@@ -78,7 +82,7 @@ class ModuleCalculatorTest {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     Path hashFile = Paths.get("target", "hasChanged", "src", "test", "resources", "hash.file");
     Files.deleteIfExists(hashFile);
-    boolean x = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile);
+    boolean x = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile, DEFAULT_EXCLUDES);
     assertThat(x).isTrue();
   }
 
@@ -88,14 +92,14 @@ class ModuleCalculatorTest {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     Path hashFile = Paths.get("target", "hasXXXHasChanged", "src", "test", "resources", "hash.file");
     Files.deleteIfExists(hashFile);
-    boolean x = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile);
+    boolean x = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile, DEFAULT_EXCLUDES);
     assertThat(x).isTrue();
   }
 
   @Test
   void calculateHashForDirectoryTree() throws IOException {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
-    ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(Paths.get("."));
+    ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(Paths.get("."), DEFAULT_EXCLUDES);
 
     assertThat(x.getDigest().byteArray()).hasSize(32);
   }

@@ -3,6 +3,7 @@ package com.soebes.module.calculator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public final class ModuleCalculator {
     // intentionally empty.
   }
 
-  public boolean hashChanged(Path path, Path hashFile) {
+  public boolean hashChanged(Path path, Path hashFile, List<String> excludes) {
     LOGGER.debug("Starting: {} hashFile: {}", path, hashFile);
     try {
       ChecksumForFileResult hashFromFile = ChecksumForFileResult.NON_EXISTENT;
@@ -26,7 +27,7 @@ public final class ModuleCalculator {
         hashFromFile = new ChecksumForFileResult(Files.readAllBytes(hashFile));
       }
 
-      ChecksumForFileResult calculatedHash = calculateHashForDirectoryTree(path);
+      ChecksumForFileResult calculatedHash = calculateHashForDirectoryTree(path,excludes);
 
       //TODO: Create file only if not existing yet!
       Files.createDirectories(hashFile.getParent());
@@ -41,13 +42,9 @@ public final class ModuleCalculator {
     }
   }
 
-  /**
-   * TODO: Find a way to handle those exclusions; also get things from .gitignore?
-   *    var defaultExcludes = List.of("target", ".git", ".github", ".idea");
-   */
-  public ChecksumForFileResult calculateHashForDirectoryTree(Path path) throws IOException {
+  public ChecksumForFileResult calculateHashForDirectoryTree(Path path, List<String> excludes) throws IOException {
     LOGGER.debug("Starting: {}", path);
-    List<Path> paths = selectAllFiles(path);
+    List<Path> paths = selectAllFiles(path, excludes);
     return paths
         .parallelStream()
         .peek(f -> LOGGER.debug("File:{}", f))
