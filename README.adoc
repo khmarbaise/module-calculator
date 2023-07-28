@@ -18,6 +18,9 @@
 //
 = Module Calculator
 
+The idea is to identify a change within a directory tree based
+on a calculated hash which is stored within a file and compared
+to actual calculated hash.
 
 == State
 
