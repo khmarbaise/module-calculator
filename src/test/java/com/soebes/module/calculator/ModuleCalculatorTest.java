@@ -1,5 +1,24 @@
 package com.soebes.module.calculator;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -14,10 +33,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author Karl Heinz Marbaise
+ */
 class ModuleCalculatorTest {
 
   private static final List<String> DEFAULT_EXCLUDES = Arrays.asList("target", ".git", ".github", ".idea");
 
+  /**
+   * Defined as int array instead of byte array otherwise
+   * needed a lot of casts.
+   */
   private static byte[] convert() {
     int[] given = new int[]{
         0x6e, 0x55, 0x00, 0xcf, 0x09, 0x33, 0x8d,
@@ -40,7 +66,7 @@ class ModuleCalculatorTest {
 
 
   @Test
-  void name() throws IOException {
+  void checkToCalculateTheDefaultHashSum() throws IOException {
     try (FileSystem fileSystem = MemoryFileSystemBuilder.newLinux().build()) {
       Path root = fileSystem.getPath("/");
       Files.createDirectories(root);
@@ -52,14 +78,14 @@ class ModuleCalculatorTest {
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/target/maven-status/module.hash"), "hashfile".getBytes(StandardCharsets.UTF_8)); // Will be ignored!
       ModuleCalculator moduleCalculator = new ModuleCalculator();
-      ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(root.resolve("/root-project"), DEFAULT_EXCLUDES);
+      ChecksumForFileResult result = moduleCalculator.calculateHashForDirectoryTree(root.resolve("/root-project"), DEFAULT_EXCLUDES);
 
-      assertThat(x).isEqualTo(DEFAULT);
+      assertThat(result).isEqualTo(DEFAULT);
     }
   }
 
   @Test
-  void hasChangedShouldResultInFalse() throws IOException {
+  void hasChangedShouldBeFalse() throws IOException {
     try (FileSystem fileSystem = MemoryFileSystemBuilder.newLinux().build()) {
       Path root = fileSystem.getPath("/");
       Files.createDirectories(root);
@@ -78,17 +104,16 @@ class ModuleCalculatorTest {
   }
 
   @Test
-  void hasChanged() throws IOException {
+  void hasChangedShouldBeTrue() throws IOException {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     Path hashFile = Paths.get("target", "hasChanged", "src", "test", "resources", "hash.file");
     Files.deleteIfExists(hashFile);
-    boolean x = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile, DEFAULT_EXCLUDES);
-    assertThat(x).isTrue();
+    boolean hashChanged = moduleCalculator.hashChanged(Paths.get("src", "test", "resources"), hashFile, DEFAULT_EXCLUDES);
+    assertThat(hashChanged).isTrue();
   }
 
   @Test
-  void hasXXXhasChanged() throws IOException {
-
+  void hasChangedFromTargetDirectoryIsTrue() throws IOException {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     Path hashFile = Paths.get("target", "hasXXXHasChanged", "src", "test", "resources", "hash.file");
     Files.deleteIfExists(hashFile);
@@ -97,7 +122,7 @@ class ModuleCalculatorTest {
   }
 
   @Test
-  void calculateHashForDirectoryTree() throws IOException {
+  void theSizeOfTheCalculatedHashIs32Bytes() throws IOException {
     ModuleCalculator moduleCalculator = new ModuleCalculator();
     ChecksumForFileResult x = moduleCalculator.calculateHashForDirectoryTree(Paths.get("."), DEFAULT_EXCLUDES);
 
@@ -105,7 +130,7 @@ class ModuleCalculatorTest {
   }
 
   @Test
-  void writeHashToFile() throws IOException {
+  void nullHashHasExpectedSize() throws IOException {
     Path hashFile = Paths.get("target", "hash.file");
     Files.write(hashFile, ChecksumForFileResult.NULL.getDigest().byteArray());
     assertThat(hashFile).hasSize(32);
@@ -113,7 +138,9 @@ class ModuleCalculatorTest {
 
   @Test
   void readHashFromFile() throws IOException {
-    ChecksumForFileResult checksumForFileResult = new ChecksumForFileResult(Files.readAllBytes(Paths.get("src/test/resources/target", "hash.file")));
+    Path hashFileLocation = Paths.get("src", "test", "resources", "target", "hash.file");
+    System.out.println("hashFileLocation = " + hashFileLocation);
+    ChecksumForFileResult checksumForFileResult = new ChecksumForFileResult(Files.readAllBytes(hashFileLocation));
     assertThat(checksumForFileResult.getDigest().byteArray()).containsExactly(
         0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
         0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
