@@ -27,7 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static com.soebes.module.calculator.FileSelector.selectAllFiles;
+import static com.soebes.module.calculator.FileSelector.selectFiles;
 import static com.soebes.module.calculator.FileSelector.toChecksumForFile;
 
 /**
@@ -41,6 +41,15 @@ public final class ModuleCalculator {
     // intentionally empty.
   }
 
+  /**
+   * This will calculate the current hash over the directory tree given by
+   * {@code path} and compares it with {@code hashFile}.
+   * @param path The root directory where to start calculating the hash.
+   * @param hashFile The hashFile which is read if existing and compared to the actual hash.
+   * @param excludes The list of excluded directories.
+   * @return {@code false} if there is no difference between hashFile and actual hash otherwise {@code true}.
+   * If the {@code hashFile} does not exist it will be assumed there is a change and the result {@code true}.
+   */
   public boolean hashChanged(Path path, Path hashFile, List<String> excludes) {
     LOGGER.debug("Starting: {} hashFile: {}", path, hashFile);
     try {
@@ -51,7 +60,6 @@ public final class ModuleCalculator {
 
       ChecksumForFileResult calculatedHash = calculateHashForDirectoryTree(path,excludes);
 
-      //TODO: Create file only if not existing yet!
       Files.createDirectories(hashFile.getParent());
       Files.write(hashFile, calculatedHash.getDigest().byteArray());
 
@@ -64,14 +72,15 @@ public final class ModuleCalculator {
     }
   }
 
-  public ChecksumForFileResult calculateHashForDirectoryTree(Path path, List<String> excludes) throws IOException {
+  ChecksumForFileResult calculateHashForDirectoryTree(Path path, List<String> excludes) throws IOException {
     LOGGER.debug("Starting: {}", path);
-    List<Path> paths = selectAllFiles(path, excludes);
+    List<Path> paths = selectFiles(path, excludes);
+    if (LOGGER.isDebugEnabled()) {
+      paths.forEach(s -> LOGGER.debug(" -> {}", s));
+    }
     return paths
         .parallelStream()
-        .peek(f -> LOGGER.debug("File:{}", f))
         .map(toChecksumForFile)
-        .peek(s -> LOGGER.debug("{}", s))
         .reduce(ChecksumForFileResult.NULL, ChecksumForFileResult::accept);
   }
 }

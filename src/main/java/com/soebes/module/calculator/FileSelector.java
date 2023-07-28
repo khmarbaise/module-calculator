@@ -41,7 +41,7 @@ final class FileSelector {
     // intentionally empty.
   }
 
-  static List<Path> selectAllFiles(Path start, List<String> excludes) throws IOException {
+  static List<Path> selectFiles(Path start, List<String> excludes) throws IOException {
     try (Stream<Path> pathStream = Files.walk(start)) {
       return pathStream
           .filter(IS_VALID_FILE)

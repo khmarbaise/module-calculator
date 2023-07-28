@@ -56,7 +56,7 @@ class FileSelectorTest {
       Files.write(root.resolve("/root-project/target/first.class"),"Example in target".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/src/main/java/com/example/FirstJava.java"),"Das ist ein Test".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
-      List<Path> result = FileSelector.selectAllFiles(root.resolve("/root-project"), Collections.emptyList());
+      List<Path> result = FileSelector.selectFiles(root.resolve("/root-project"), Collections.emptyList());
 
       List<Path> expectedResult = Arrays.asList(
           root.resolve("/root-project/.git/example-in-git"),
@@ -87,7 +87,7 @@ class FileSelectorTest {
       Files.write(root.resolve("/root-project/src/main/java/com/example/FirstJava.java"),"Das ist ein Test".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
 
-      List<Path> result = FileSelector.selectAllFiles(root.resolve("/root-project"), Collections.singletonList("target"));
+      List<Path> result = FileSelector.selectFiles(root.resolve("/root-project"), Collections.singletonList("target"));
 
       List<Path> expectedResult = Arrays.asList(
           root.resolve("/root-project/.git/example-in-git"),
@@ -117,7 +117,7 @@ class FileSelectorTest {
       Files.write(root.resolve("/root-project/src/main/java/com/example/FirstJava.java"),"Das ist ein Test".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
 
-      List<Path> result = FileSelector.selectAllFiles(root.resolve("/root-project"), Arrays.asList("target", ".git"));
+      List<Path> result = FileSelector.selectFiles(root.resolve("/root-project"), Arrays.asList("target", ".git"));
 
       List<Path> expectedResult = Arrays.asList(
           root.resolve("/root-project/.github/example-in-github"),
@@ -146,7 +146,7 @@ class FileSelectorTest {
       Files.write(root.resolve("/root-project/src/main/java/com/example/FirstJava.java"),"Das ist ein Test".getBytes(StandardCharsets.UTF_8));
       Files.write(root.resolve("/root-project/pom.xml"), "pom of the project.".getBytes(StandardCharsets.UTF_8));
 
-      List<Path> result = FileSelector.selectAllFiles(root.resolve("/root-project"), Arrays.asList("target", ".git", ".github"));
+      List<Path> result = FileSelector.selectFiles(root.resolve("/root-project"), Arrays.asList("target", ".git", ".github"));
 
       List<Path> expectedResult = Arrays.asList(
           root.resolve("/root-project/pom.xml"),

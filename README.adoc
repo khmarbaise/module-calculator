@@ -28,6 +28,10 @@ It's just a Proof Of Concept
 
 == Requirements
 
-JDK8+?? Not yet finalized.
+=== Build Time
+ * Apache Maven 3.8+
+ * JDK11+ for building.
 
+=== Run Time
 
+ * JDK8+
