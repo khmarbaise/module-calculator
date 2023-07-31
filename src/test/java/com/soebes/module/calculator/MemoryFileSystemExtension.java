@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.nio.file.FileSystem;
 
-class FileSystemExtension implements BeforeEachCallback, AfterEachCallback {
+class MemoryFileSystemExtension implements BeforeEachCallback, AfterEachCallback {
 
   private FileSystem fileSystem;
 
@@ -17,7 +17,7 @@ class FileSystemExtension implements BeforeEachCallback, AfterEachCallback {
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
-    this.fileSystem = MemoryFileSystemBuilder.newEmpty().build("name");
+    this.fileSystem = MemoryFileSystemBuilder.newEmpty().build();
   }
 
   @Override

@@ -37,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Karl Heinz Marbaise
  */
+@MemoryFileSystem
 class FileSelectorTest {
 
   @Test
