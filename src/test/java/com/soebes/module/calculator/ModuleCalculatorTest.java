@@ -139,7 +139,6 @@ class ModuleCalculatorTest {
   @Test
   void readHashFromFile() throws IOException {
     Path hashFileLocation = Paths.get("src", "test", "resources", "target", "hash.file");
-    System.out.println("hashFileLocation = " + hashFileLocation);
     ChecksumForFileResult checksumForFileResult = new ChecksumForFileResult(Files.readAllBytes(hashFileLocation));
     assertThat(checksumForFileResult.getDigest().byteArray()).containsExactly(
         0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
