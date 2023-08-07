@@ -42,8 +42,7 @@ class FileSystemExtension implements BeforeEachCallback, AfterEachCallback, Para
       return false;
     }
 
-    Class<?> type = parameterContext.getParameter().getType();
-    return type == FileSystem.class;
+    return parameterContext.getParameter().getType() == FileSystem.class;
   }
 
   @Override
