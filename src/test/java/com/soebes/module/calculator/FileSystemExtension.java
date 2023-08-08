@@ -47,8 +47,7 @@ class FileSystemExtension implements BeforeEachCallback, AfterEachCallback, Para
 
   @Override
   public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    Class<?> type = parameterContext.getParameter().getType();
-    if (type == FileSystem.class) {
+    if (parameterContext.getParameter().getType() == FileSystem.class) {
       return getContext(extensionContext).get(FILE_SYSTEM + extensionContext.getUniqueId(), FileSystem.class);
     }
     return null;
